@@ -1,0 +1,12 @@
+2021-11-22 14:39:50 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "RATES" not found; SQL statement:
+DROP TABLE rates; [42102-200]
+2021-11-22 14:40:25 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "RATES" not found; SQL statement:
+DROP TABLE rates; [42102-200]
+2021-11-22 14:40:41 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "RATES" not found; SQL statement:
+DROP TABLE rates; [42102-200]
+2021-11-22 14:40:51 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "RATES" not found; SQL statement:
+DROP TABLE rates; [42102-200]

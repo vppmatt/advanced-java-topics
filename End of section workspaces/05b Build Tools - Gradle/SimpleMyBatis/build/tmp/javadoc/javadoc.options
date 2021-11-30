@@ -1,0 +1,9 @@
+-classpath 'C:\\neueda\\advancedJava\\End of section workspaces\\05b Build Tools - Gradle\\SimpleMyBatis\\build\\classes\\java\\main;C:\\neueda\\advancedJava\\End of section workspaces\\05b Build Tools - Gradle\\SimpleMyBatis\\build\\resources\\main;C:\\Users\\matt\\.gradle\\caches\\modules-2\\files-2.1\\org.projectlombok\\lombok\\1.18.22\\9c08ea24c6eb714e2d6170e8122c069a0ba9aacf\\lombok-1.18.22.jar;C:\\Users\\matt\\.gradle\\caches\\modules-2\\files-2.1\\org.mybatis\\mybatis\\3.5.7\\f7974c644bcabae494512bddd105a1733316b376\\mybatis-3.5.7.jar;C:\\Users\\matt\\.gradle\\caches\\modules-2\\files-2.1\\com.h2database\\h2\\2.0.202\\aa2bed5c4fc426eb83f14c55c51360e89eda53a\\h2-2.0.202.jar'
+-d 'C:\\neueda\\advancedJava\\End of section workspaces\\05b Build Tools - Gradle\\SimpleMyBatis\\build\\docs\\javadoc'
+-doctitle 'SimpleMyBatis 1.0 API'
+-notimestamp 
+-quiet 
+-windowtitle 'SimpleMyBatis 1.0 API'
+'C:\\neueda\\advancedJava\\End of section workspaces\\05b Build Tools - Gradle\\SimpleMyBatis\\src\\main\\java\\Customer.java'
+'C:\\neueda\\advancedJava\\End of section workspaces\\05b Build Tools - Gradle\\SimpleMyBatis\\src\\main\\java\\CustomerMapper.java'
+'C:\\neueda\\advancedJava\\End of section workspaces\\05b Build Tools - Gradle\\SimpleMyBatis\\src\\main\\java\\Main.java'

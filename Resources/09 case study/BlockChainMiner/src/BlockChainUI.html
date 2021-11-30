@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Block Chain example application</title>
+
+    <!--bootstrap -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"
+            integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p"
+            crossorigin="anonymous"></script>
+
+    <!--jquery-->
+    <script src="https://code.jquery.com/jquery-3.6.0.slim.min.js"
+            integrity="sha256-u7e5khyithlIdTpu22PHhENmPcRdFiHRjhAuHcs05RI="
+            crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/json2html/2.1.0/json2html.min.js"></script>
+
+    <!--font awesome-->
+    <script src="https://kit.fontawesome.com/6981035fd0.js" crossorigin="anonymous"></script>
+
+    <!--local functions-->
+    <script>
+
+        var server = "http://localhost:8123";
+
+        function refresh_incoming_transactions() {
+
+            let tableHeader = "<div class='row' style='max-width: 95%'>";
+            let template = {
+                    '<>': 'div', 'class': 'row', 'style' : 'max-width: 95%', 'html':
+                        [
+                            {'<>': 'div', 'class': 'col-auto', 'html': '${id}'},
+                            {'<>': 'div', 'class': 'col-auto', 'html': '${caller}'},
+                            {'<>': 'div', 'class': 'col-auto', 'html': '${recipient}'},
+                            {'<>': 'div', 'class': 'col-auto', 'html': '${start}'},
+                            {'<>': 'div', 'class': 'col-auto', 'html': '${end}'},
+                            {'<>': 'div', 'class': 'col-auto', 'html': '${status}'}
+                        ]
+                };
+
+            sendRestRequest("GET", server + "/incoming_transactions", null, "incoming_transactions",
+                tableHeader, "</div>", true, template);
+        }
+
+        function incoming_transactions_monitor() {
+            refresh_incoming_transactions();
+            window.setInterval(function () {
+                    refresh_incoming_transactions();
+                }, 2000);
+            $("#start_monitoring_incoming_transactions").hide();
+        }
+
+        function active_block() {
+
+            let template = {
+                '<>': 'div', 'style' : 'padding-left: 20px', 'html': [
+                    {'<>': 'div','class': 'row', 'html': 'Block ID : ${id}'},
+                    {'<>': 'div','class': 'row', 'html': 'Previoius Hash : ${previousHash}'},
+                    {'<>': 'div','class': 'row', 'html' : [
+                            {'<>' : 'div', 'class' : 'col', 'html' : [
+                                    {'<>':'div', 'class' : 'row', 'obj':function(){
+                                            return(this.phoneCalls);
+                                        },'html' : [
+                                            {'<>': 'div', 'class': 'col-auto', 'html': '${id}'},
+                                            {'<>': 'div', 'class': 'col-auto', 'html': '${caller}'},
+                                            {'<>': 'div', 'class': 'col-auto', 'html': '${recipient}'},
+                                            {'<>': 'div', 'class': 'col-auto', 'html': '${start}'},
+                                            {'<>': 'div', 'class': 'col-auto', 'html': '${end}'},
+                                            {'<>': 'div', 'class': 'col-auto', 'html': '${status}'}
+                                        ]}
+                                ]}
+                            ]
+                    }
+                ]};
+
+            sendRestRequest("GET", server + "/active_block", null, "active_block", "", "", true, template);
+        }
+
+        function active_block_monitor() {
+            active_block();
+            window.setInterval(function () {
+                active_block();
+            }, 2000);
+            $("#start_monitoring_active_block").hide();
+        }
+
+        function blockchain() {
+
+            let tableHeader = "<div class='row' style='max-width: 95%'>";
+
+            let template = {
+                '<>': 'div', 'class': 'row', 'style' : 'max-width: 95%', 'html':
+                    [
+                        {'<>': 'div', 'class': 'col-auto', 'style' : 'width: 70px;',
+                            'html': '<button onclick="refresh_block_detail(${id})">${id}</button>'},
+                        {'<>': 'div', 'class': 'col-auto', 'html': '${content}'},
+                        {'<>': 'div', 'class': 'col-auto', 'html': '${time}'},
+                        {'<>': 'div', 'class': 'col-auto', 'html': '${hash}'}
+                    ]
+            };
+
+            sendRestRequest("GET", server + "/blockchain", null, "blockchain", tableHeader, "</div>", true, template);
+        }
+
+        function refresh_block_detail(blockId) {
+
+            let tableHeader = "<div class='row' style='max-width: 95%'>";
+            let template = {
+                '<>': 'div', 'class': 'row', 'style' : 'max-width: 95%', 'html':
+                    [
+                        {'<>': 'div', 'class': 'col-auto', 'html': '${id}'},
+                        {'<>': 'div', 'class': 'col-auto', 'html': '${caller}'},
+                        {'<>': 'div', 'class': 'col-auto', 'html': '${recipient}'},
+                        {'<>': 'div', 'class': 'col-auto', 'html': '${start}'},
+                        {'<>': 'div', 'class': 'col-auto', 'html': '${end}'},
+                        {'<>': 'div', 'class': 'col-auto', 'html': '${status}'}
+                    ]
+            };
+
+            sendRestRequest("GET", server + "/block_detail/"+blockId, null, "block_detail",
+                tableHeader, "</div>", true, template);
+        }
+
+
+        function health_check() {
+            sendRestRequest("GET", server + "/health-check", null, "health_check", "", "", false, null);
+        }
+
+        function sendRestRequest(method, url, data, responseDivId, preStyle, postStyle, jsonStyle, template) {
+
+            $("#" + responseDivId).html("sending request...");
+
+            const xhttp = new XMLHttpRequest();
+            xhttp.onreadystatechange = function () {
+                if (this.readyState == 4 && this.status == 200) {
+                    let output = this.response;
+                    if (jsonStyle) {
+                        $("#" + responseDivId).empty();
+                        $("#" + responseDivId).append(preStyle);
+                        $("#" + responseDivId).json2html(output, template, {method: 'append'});
+                        $("#" + responseDivId).append(postStyle);
+                    } else {
+                        $("#" + responseDivId).html(preStyle + output + postStyle);
+                    }
+
+                } else {
+                    console.log('m5', this.readyState, this.status);
+                    $("#" + responseDivId).html(preStyle + "<span style='color:#f00;'> ERROR " + this.status + "</span> " + this.response + postStyle);
+                }
+            };
+            xhttp.open(method, url, true);
+
+            xhttp.send(data);
+            $("#" + responseDivId).html("awaiting response...");
+
+        }
+
+        $(document).ready(function () {
+            health_check();
+        });
+
+    </script>
+
+</head>
+<body>
+
+<div class="row bg-dark">
+    <div class="text-white col-4 h3"><span class="p-2">BlockChain User Interface</span></div>
+    <div class="text-white col-8 text-end"><span class="p-2">Server status: </span><span id="health_check"></span>
+        <button type="button" class="btn btn-outline-light m-2 px-3" onclick="health_check()"><i
+                class="fas fa-xs fa-redo"></i></button>
+    </div>
+</div>
+
+<div class="container-fluid mx-1">
+
+    <div class="row my-2">
+        <div class="col-6">
+            <div class="border border-primary p-2">
+                <div class='btn-toolbar pull-right '>
+                    <h2 class="text-primary">Transactions in holding area</h2>
+                    <button type="button" class="btn btn-outline-primary m-2 px-3" id="start_monitoring_incoming_transactions"
+                            onclick="incoming_transactions_monitor()"><i class="fas fa-xs fa-play"></i></button>
+
+                </div>
+            </div>
+
+            <div class="border border-primary p-2">
+                <div style="height: 200px; overflow-y:auto; font-size: 12px;" id="incoming_transactions"></div>
+            </div>
+        </div>
+
+        <div class="col-6">
+            <div class="border border-primary p-2">
+                <div class='btn-toolbar pull-right '>
+                    <h2 class="text-primary">Block currently being mined</h2>
+                    <button type="button" class="btn btn-outline-primary m-2 px-3" id = "start_monitoring_active_block"
+                            onclick="active_block_monitor()"><i class="fas fa-xs fa-play"></i></button>
+
+                </div>
+            </div>
+
+            <div class="border border-primary p-2">
+                <div style="height: 200px; overflow-y:auto; font-size: 12px;" id="active_block"></div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-6">
+            <div class="border border-primary p-2">
+                <div class='btn-toolbar pull-right '>
+                    <h2 class="text-primary">BlockChain</h2>
+                    <button type="button" class="btn btn-outline-primary m-2 px-3"
+                            onclick="blockchain()"><i class="fas fa-xs fa-redo"></i></button>
+                </div>
+            </div>
+
+
+            <div class="border border-primary p-2">
+                <div style="height: 200px; overflow-y:auto; font-size: 12px;" id="blockchain"></div>
+            </div>
+        </div>
+
+        <div class="col-6">
+            <div class="border border-primary p-2">
+                <div class='btn-toolbar pull-right '>
+                    <h2 class="text-primary">Block detail</h2>
+                </div>
+            </div>
+
+
+            <div class="border border-primary p-2">
+                <div style="height: 200px; overflow-y:auto; font-size: 12px;" id="block_detail"></div>
+            </div>
+        </div>
+    </div>
+
+
+</div>
+</body>
+</html>
