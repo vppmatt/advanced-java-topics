@@ -2,9 +2,12 @@ import com.sun.xml.internal.bind.v2.runtime.output.SAXOutput;
 import customers.Customer;
 import customers.Customers;
 
+import java.sql.Array;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class Main {
     public static void main(String[] args) {
@@ -34,6 +37,24 @@ public class Main {
         System.out.println("First oldest " + firstOldest);
 
         List<Customer> activeCustomers = customers.stream().filter(cust1 -> cust1.isActive()).collect(Collectors.toList());
+
+        List<Customer> finalChallenge = customers.stream()
+                .filter(cx -> !cx.getFirstname().startsWith("A") && !cx.getFirstname().startsWith("B"))
+                .filter(cx -> cx.getAge() % 5 == 0)
+                .flatMap(cx -> {
+                    if (cx.getAge() % 10 == 0) {
+                        Customer[] threeCustomers = new Customer[] {cx,cx,cx};
+                        Stream<Customer> customersToReturn = Arrays.stream( threeCustomers);
+                        return customersToReturn;
+                    }
+                    else {
+                        return Stream.of(cx);
+                    }
+                })
+                .sorted( (c1,c2) -> c2.getSurname().compareTo(c1.getSurname()))
+                .collect(Collectors.toList());
+
+        finalChallenge.forEach(System.out::println);
     }
 
 }
