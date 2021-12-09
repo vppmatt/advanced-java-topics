@@ -6,15 +6,65 @@ import model.blockchain.Block;
 import model.blockchain.BlockValidationException;
 import model.blockchain.HashResult;
 
+import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 public class MiningSystem implements Runnable{
 
     private DataContainer dataContainer;
+    private int difficultyLevel;
+    private int miningThreadPoolSize;
+    private int miningThreadNonceTrials;
+    private int maxNonceStartingValue;
 
-    public MiningSystem(DataContainer dataContainer) {
+    public static class Builder {
+        private int difficultyLevel = 5;
+        private int miningThreadPoolSize = 8;
+        private final DataContainer dataContainer;
+        private int miningThreadNonceTrials = 100000;
+        private int maxNonceStartingValue = 10000;
+
+        public Builder(DataContainer dataContainer) {
+            this.dataContainer = dataContainer;
+        }
+
+        public Builder difficultyLevel(int difficultyLevel) {
+            this.difficultyLevel = difficultyLevel;
+            return this;
+        }
+
+        public Builder miningThreadPoolSize(int miningThreadPoolSize) {
+            this.miningThreadPoolSize = miningThreadPoolSize;
+            return this;
+        }
+
+        public Builder miningThreadNonceTrials(int miningThreadNonceTrials) {
+            this.miningThreadNonceTrials= miningThreadNonceTrials;
+            return this;
+        }
+
+        public Builder maxNonceStartingValue(int maxNonceStartingValue) {
+            this.maxNonceStartingValue = maxNonceStartingValue;
+            return this;
+        }
+
+        public MiningSystem build() {
+            return new MiningSystem(dataContainer, difficultyLevel, miningThreadPoolSize,
+                    miningThreadNonceTrials, maxNonceStartingValue);
+        }
+
+    }
+
+    private MiningSystem(DataContainer dataContainer, int difficultyLevel, int miningThreadPoolSize,
+                         int miningThreadNonceTrials,  int maxNonceStartingValue)
+    {
         this.dataContainer = dataContainer;
+        this.difficultyLevel =difficultyLevel;
+        this.miningThreadPoolSize = miningThreadPoolSize;
+        this.miningThreadNonceTrials = miningThreadNonceTrials;
+        this.maxNonceStartingValue = maxNonceStartingValue;
+
     }
 
     @Override
@@ -32,36 +82,41 @@ public class MiningSystem implements Runnable{
                 }
             } else {
                 System.out.println("*** Mining system:starting the mining process");
-                ExecutorService es =  Executors.newFixedThreadPool(Config.miningThreadPoolSize);
+                ExecutorService es =  Executors.newFixedThreadPool(miningThreadPoolSize);
                 Long start = System.currentTimeMillis();
+
                 HashResult hashResult = new HashResult();
                 Thread resultsThread = new Thread(new ResultsMonitor(hashResult));
                 resultsThread.start();
 
-                for (int nonceSeed = 0; nonceSeed < Config.maxNonceStartingValue; nonceSeed++) {
-                    BlockMiner miner = new BlockMiner(nextBlock, nonceSeed * Config.miningThreadNonceTrials, hashResult, Config.difficultyLevel);
+                for (int nonceSeed = 0; nonceSeed < maxNonceStartingValue; nonceSeed++) {
+                    BlockMiner miner = new BlockMiner(nextBlock, nonceSeed * miningThreadNonceTrials, hashResult,
+                            difficultyLevel, miningThreadNonceTrials);
                     es.execute(miner);
 
                 }
 
                 try {
-
                     resultsThread.join();
                     es.shutdownNow();
-                    if (hashResult.isComplete().getCount() != 0) {
+                    if (!hashResult.isComplete()) {
                         throw new RuntimeException("Failed to find a hashcode for block " + dataContainer.getActiveBlock());
                     }
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
 
-                nextBlock.setNonce(hashResult.getNonce());
-                nextBlock.setHash(hashResult.getHash());
-                System.out.println("*** Mining system: successfully mined a block");
+                /* start of fix */
+                synchronized (this) {
+                    /* end of fix */
 
-                System.out.println("Block " + nextBlock + " hash : " + nextBlock.getHash());
-                System.out.println("Block " + nextBlock + " nonce: " + nextBlock.getNonce());
+                    nextBlock.setNonce(hashResult.getNonce());
+                    nextBlock.setHash(hashResult.getHash());
+                    System.out.println("*** Mining system: successfully mined a block");
 
+                    System.out.println("Block " + nextBlock + " hash : " + nextBlock.getHash());
+                    System.out.println("Block " + nextBlock + " nonce: " + nextBlock.getNonce());
+                }
                 Long end = System.currentTimeMillis();
 
                 System.out.println("Time taken " + (end - start) + " ms.");

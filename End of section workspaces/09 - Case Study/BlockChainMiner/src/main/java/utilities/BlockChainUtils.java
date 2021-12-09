@@ -13,7 +13,6 @@ public class BlockChainUtils {
     //as long as there is no shared state.
 
     public static String calculateHash(String data) {
-
         try {
             MessageDigest digest = MessageDigest.getInstance("SHA-256");
             byte[] rawHash = digest.digest(data.getBytes("UTF-8"));

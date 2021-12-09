@@ -10,14 +10,17 @@ public class Block {
 
         private int id;
         private String previousHash;
-        private final List<PhoneCall> phoneCalls;
+        private List<PhoneCall> phoneCalls;
         private int nonce;
         private String hash;
         private Instant timeStamp;
 
         public Block(int id, List<PhoneCall> phoneCalls, String previousHash) {
             this.previousHash = previousHash;
+            /* start of fix */
+            //this.phoneCalls = phoneCalls;
             this.phoneCalls = Collections.unmodifiableList(phoneCalls);
+            /*end of fix */
             this.id = id;
             timeStamp = Instant.now();
         }

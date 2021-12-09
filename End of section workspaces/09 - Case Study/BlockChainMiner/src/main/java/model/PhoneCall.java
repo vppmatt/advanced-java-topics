@@ -30,21 +30,51 @@ public class PhoneCall {
         return caller;
     }
 
+    /* start of fix */
+//    public void setCaller(Integer caller) {
+//        this.caller = caller;
+//    }
+    /* end of fix */
+
     public Integer getRecipient() {
         return recipient;
     }
+
+    /* start of fix */
+//    public void setRecipient(Integer recipient) {
+//        this.recipient = recipient;
+//    }
+    /* end of fix */
 
     public LocalDateTime getStart() {
         return start;
     }
 
+    /* start of fix */
+//    public void setStart(LocalDateTime start) {
+//        this.start = start;
+//    }
+    /*end  of fix */
+
     public LocalDateTime getEnd() {
         return end;
     }
 
+    /* start of fix */
+//    public void setEnd(LocalDateTime end) {
+//        this.end = end;
+//    }
+    /* end of fix */
+
     public CallStatus getStatus() {
         return status;
     }
+
+    /* start of fix */
+//    public void setStatus(CallStatus status) {
+//        this.status = status;
+//    }
+    /* end of fix */
 
     public Integer getId() {
         return id;

@@ -9,31 +9,38 @@ import java.util.List;
 import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.atomic.AtomicInteger;
-import java.util.concurrent.locks.Lock;
-import java.util.concurrent.locks.ReentrantLock;
 
 public class DataContainer {
 
-    //private List<PhoneCall> incomingCalls = new ArrayList<>();
-    private Queue<PhoneCall> incomingCalls = new ConcurrentLinkedQueue<>();
-    private BlockChain blockChain = new BlockChain();
-    private Block activeBlock;
+    private static DataContainer instance;
 
-    //private int nextTransactionId = 0;
-    private AtomicInteger nextTransactionId = new AtomicInteger(0);
+    public static DataContainer getInstance() {
 
-    private Lock getIncomingCallsLock = new ReentrantLock();
+        if (instance == null) {
+            instance = new DataContainer();
+        }
+        return instance;
 
-    //this is now for use by the rest controller only - i.e. as a readonly
-    public Queue<PhoneCall> getIncomingCalls() {
-        return incomingCalls;
     }
 
-    //new method to safely remove a set of incoming calls for the next block to use
-    public List<PhoneCall> pullIncomingCalls() {
-        ArrayList<PhoneCall> calls = new ArrayList(incomingCalls);
-        incomingCalls.removeAll(calls);
-        return calls;
+    private DataContainer() {}
+
+    /*start of fix*/
+    //private List<PhoneCall> incomingCalls = new ArrayList<>();
+    private Queue<PhoneCall> incomingCalls = new ConcurrentLinkedQueue<>();
+    /*end of fix*/
+
+    private BlockChain blockChain = new BlockChain.Builder().build();
+    private Block activeBlock;
+
+    /*start of fix*/
+    //private int nextTransactionId = 0;
+    private AtomicInteger nextTransactionId = new AtomicInteger(0);
+    /*end of fix*/
+
+
+    public Queue<PhoneCall> getIncomingCalls() {
+        return incomingCalls;
     }
 
     public BlockChain getBlockChain() {
@@ -49,7 +56,10 @@ public class DataContainer {
     }
 
     public void addIncomingCall(PhoneCall incomingCall) {
-        incomingCall.setId(nextTransactionId.getAndIncrement());
+        /* start of fix */
+        //incomingCall.setId(nextTransactionId++);
+        incomingCall.setId(nextTransactionId.incrementAndGet());
+        /* end of fix */
         incomingCalls.add(incomingCall);
     }
 }

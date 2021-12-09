@@ -9,35 +9,55 @@ import java.time.format.DateTimeFormatter;
 import java.time.format.FormatStyle;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
+import java.util.Map;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.stream.Collectors;
 
 public class BlockChain {
 
     private List<Block> blocks;
+    Locale locale;
 
-    public BlockChain() {
+    public static class Builder {
+        Locale locale = Locale.UK;
+
+        public Builder locale(Locale locale) {
+            this.locale = locale;
+            return this;
+        }
+
+        public BlockChain build() {
+            return new BlockChain(locale);
+        }
+    }
+
+    private BlockChain(Locale locale) {
+
+        /*start of fix*/
+        //blocks = new ArrayList<>();
         blocks = new CopyOnWriteArrayList<>();
+        /*end of fix*/
+
+        this.locale = locale;
     }
 
     public void addBlock(Block block) throws BlockValidationException {
         String lastHash = "0";
 
-        synchronized (this) {
-            if (blocks.size() > 0) {
-                lastHash = blocks.get(blocks.size() - 1).getHash();
-            }
-
-            if (!lastHash.equals(block.getPreviousHash())) {
-                throw new BlockValidationException();
-            }
-
-            if (!BlockChainUtils.validateBlock(block)) {
-                throw new BlockValidationException();
-            }
-
-            blocks.add(block);
+        if (blocks.size() > 0) {
+            lastHash = blocks.get(blocks.size() - 1).getHash();
         }
+
+        if (!lastHash.equals(block.getPreviousHash())) {
+            throw new BlockValidationException();
+        }
+
+        if (!BlockChainUtils.validateBlock(block)) {
+            throw new BlockValidationException();
+        }
+
+        blocks.add(block);
     }
 
     public void printAndValidate() {
@@ -92,7 +112,7 @@ public class BlockChain {
                     block.getPhoneCalls().get(block.getPhoneCalls().size() - 1).getId();
             DateTimeFormatter formatter =
                     DateTimeFormatter.ofLocalizedDateTime( FormatStyle.MEDIUM )
-                            .withLocale(Config.locale )
+                            .withLocale(locale )
                             .withZone( ZoneId.systemDefault() );
             String time = formatter.format( block.getTimeStamp() );
             return new BlockSummary(block.getId(), block.getHash(), content, time);

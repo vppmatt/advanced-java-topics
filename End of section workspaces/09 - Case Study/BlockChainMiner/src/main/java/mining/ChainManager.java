@@ -6,13 +6,14 @@ import model.blockchain.Block;
 import model.blockchain.BlockValidationException;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class ChainManager implements Runnable{
 
     private DataContainer dataContainer;
 
-    public ChainManager(DataContainer dataContainer) {
+    protected ChainManager(DataContainer dataContainer) {
         this.dataContainer = dataContainer;
     }
 
@@ -21,7 +22,19 @@ public class ChainManager implements Runnable{
         while(true) {
             if (dataContainer.getActiveBlock() == null) {
                 System.out.println("*** Chain Manager: there is no active block");
-                List<PhoneCall> phoneCalls =dataContainer.pullIncomingCalls();
+
+                /* start of fix */
+                //List<PhoneCall> phoneCalls = new ArrayList<>(dataContainer.getIncomingCalls());
+                List<PhoneCall> tempPhoneCalls = new ArrayList<>();
+                int size = dataContainer.getIncomingCalls().size();
+                for (int i = 0; i < size; i++) {
+                    PhoneCall call = dataContainer.getIncomingCalls().poll();
+                    if (call != null) tempPhoneCalls.add(call);
+                }
+                List<PhoneCall> phoneCalls = Collections.unmodifiableList(tempPhoneCalls);
+
+                 /* end of fix */
+
                 if (phoneCalls.size() == 0) {
                     System.out.println("*** Chain Manager: No transactions waiting to be mined...");
                     try {
@@ -31,7 +44,13 @@ public class ChainManager implements Runnable{
                     }
                 } else {
                     Block block = new Block(dataContainer.getBlockChain().getSize(), phoneCalls, dataContainer.getBlockChain().getLastHash());
-                    dataContainer.getIncomingCalls().removeAll(phoneCalls);
+
+                    /* start of fix
+                    * this is no longer needed as the call to .poll() has already removed them
+                    * */
+                    //dataContainer.getIncomingCalls().removeAll(phoneCalls);
+                    /* end of fix */
+
                     dataContainer.setActiveBlock(block);
                     System.out.println("*** Chain Manager: created new block with lastHash " + block.getPreviousHash() );
                 }
