@@ -15,7 +15,7 @@ public class Main {
 
     (1) Add dependencies to the project for myBatis, h2, junit and mockito.
 
-    (2) Create a new calls called PersistedAprValidator which takes the APRValidator, and if the result is present,
+    (2) Create a new class called PersistedAprValidator which takes the APRValidator, and if the result is present,
      saves the data to an H2 database. Create it using the Decorator pattern. Convert the main method to use this
      new class.
 
@@ -36,7 +36,7 @@ public class Main {
      Hint: to do this you will need to use mocks, and possibly a spy
 
      (4) At the end of the main method is a list of loans. Find the APR rate for each one, and then
-     print out the average of the highest and lowest rate. Use streams where possible.
+     print out the average of the highest and lowest rate. Use streams where possible.apra
 
      And finally... Use the method in DBUtils to print out all the saved data so that we know it worked.
 
