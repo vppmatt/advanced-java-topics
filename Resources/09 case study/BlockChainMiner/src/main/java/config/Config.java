@@ -4,7 +4,7 @@ import java.util.Locale;
 
 public class Config {
 
-    public static final int difficultyLevel = 5;
+    public static final int difficultyLevel = 6;
     public static final int miningThreadPoolSize = 10;
     public static final Locale locale = Locale.UK;
     public static final int callGenerationTime = 2000;
