@@ -36,9 +36,10 @@ public class Main {
      Hint: to do this you will need to use mocks, and possibly a spy
 
      (4) At the end of the main method is a list of loans. Find the APR rate for each one, and then
-     print out the average of the highest and lowest rate. Use streams where possible.apra
+     print out the average of the highest and lowest rate. Use streams where possible.
 
-     And finally... Use the method in DBUtils to print out all the saved data so that we know it worked.
+     And finally... Call the printAllSavedLoanRates method in DBUtils to print out all the
+     saved data so that we know it worked.
 
     */
 
